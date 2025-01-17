@@ -14,10 +14,6 @@ WIDTH, HEIGHT = 735, 413
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Berserk Game")
 
-# Загрузка музыки
-pygame.mixer.music.load("music/Miura Jam - Tell Me Why (Berserk).mp3")
-pygame.mixer.music.play(-1)
-
 # Загрузка изображения фона
 background_image = pygame.image.load("image/background.jpg")
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
@@ -36,9 +32,16 @@ current_index_scene = 0
 # Меню
 class Menu:
     def __init__(self):
+
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+
         self.options = ["Играть", "Настройки", "Выйти"]
         self.current_option_index = 0
         self.setting = settings.Settings()
+        self.setting.load_settings()
+        pygame.mixer.music.set_volume(self.setting.volume)
+
+    def reload_settings(self):
         self.setting.load_settings()
         pygame.mixer.music.set_volume(self.setting.volume)
 
@@ -92,11 +95,18 @@ class Menu:
 
 
 menu = Menu()
-setting_menu = MenuSetting.SettingMenu()
 
 
 def scene_menu():
+    menu.reload_settings()
+    # Загрузка музыки
+    pygame.mixer.music.load("music/Miura Jam - Tell Me Why (Berserk).mp3")
+    pygame.mixer.music.play(-1)
+
+    # Настройка главного меню
     pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Berserk Game")
+
     running = True
     global current_index_scene
     # Основной игровой цикл
@@ -132,20 +142,28 @@ def scene_menu():
 
 
 def setting_window():
-    setting_menu = SettingMenu()
-    running = True
-
-    while running:
+    setting_menu = MenuSetting.SettingMenu()
+    events = pygame.event.get()
+    while setting_menu.running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                setting_menu.running = False
 
-        setting_menu.win.fill((255, 255, 255))  # Очистка экрана (или отрисовка фона)
+        setting_menu.win.fill((255, 255, 255))  # Очистка экрана
         setting_menu.win.blit(setting_menu.background_image, (0, 0))  # Отрисовка фона
-
+        setting_menu.slider.draw()  # Отрисовка слайдера
+        setting_menu.dropdown.draw()  # Отрисовка выпадающего списка
+        setting_menu.volume_text.draw()  # Отрисовка текста громкости
+        setting_menu.dropdown_text.draw()  # Отрисовка текста выбора разрешения
+        setting_menu.save.draw()  # Отрисовка кнопки сохранения
+        setting_menu.back.draw()  # Отрисовка кнопки "Назад"
+        setting_menu.output_music_volume.draw()  # Отрисовка громкости звука
+        pygame.mixer.music.set_volume(setting_menu.change_music_volume() / 100)
         pygame.display.update()
+        pygame_widgets.update(events)
 
-    pygame.quit()
+    global current_index_scene
+    current_index_scene = 0
 
 
 # Смена сцен

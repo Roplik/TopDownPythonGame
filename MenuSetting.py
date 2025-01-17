@@ -5,16 +5,26 @@ from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 from pygame_widgets.button import Button
 import settings
+import os
 
 
 class SettingMenu:
     def __init__(self):
+        # Загрузка музыки
+        pygame.mixer.music.load("music/Blizzard - Hearthstone Theme.mp3")
+        pygame.mixer.music.play(-1)
+        self.running = True
         self.setting = settings.Settings()
         self.setting.load_settings()
+        self.WIDTH = 1000
+        self.HEIGHT = 600
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
 
         # Загрузка изображения фона
         self.background_image = pygame.image.load("image/setting.jpg")
-        self.background_image = pygame.transform.scale(self.background_image, (1000, 600))
+        self.background_image = pygame.transform.scale(self.background_image, (self.WIDTH, self.HEIGHT))
+
+        self.music_volume = int(self.setting.volume * 100)
 
         pygame.init()
         self.win = pygame.display.set_mode((1000, 600))
@@ -24,7 +34,8 @@ class SettingMenu:
         self.volume_text.setText("Volume:")
 
         self.slider = Slider(self.win, 210, 100, 400, 40, min=0, max=100, step=1, handleColour=(105, 105, 105))
-        self.slider.setValue(int(self.setting.volume * 100))
+        self.slider.setValue(self.music_volume)
+        self.output_music_volume = TextBox(self.win, 650, 100, 60, 50, fontSize=30)
         self.output = TextBox(self.win, 650, 100, 60, 50, fontSize=30)
         self.dropdown_text = TextBox(self.win, 50, 200, 250, 50, fontSize=30)
         self.dropdown_text.setText("Select resolution:")
@@ -76,6 +87,7 @@ class SettingMenu:
         self.dropdown_text.disable()
         self.volume_text.disable()
         self.output.disable()
+        self.output_music_volume.disable()
 
     def write_config(self):
         if self.dropdown.getSelected():
@@ -87,6 +99,13 @@ class SettingMenu:
             config_file.write(f'screen_width={screen_width}\n')
             config_file.write(f'screen_height={screen_height}\n')
             config_file.write(f'volume={self.slider.getValue()}\n')
+
+    def change_music_volume(self):
+        self.output_music_volume.setText(self.slider.getValue())
+        return self.slider.getValue()
+
+    def back_to_menu(self):
+        self.running = False
 
     def draw(self):
         # Отрисовка фона
