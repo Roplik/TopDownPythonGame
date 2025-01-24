@@ -6,6 +6,7 @@ from tile import Tile
 from player import Player
 from debug import debug
 from support import *
+from gui import Timer
 
 
 class Level:
@@ -17,6 +18,8 @@ class Level:
         self.music_path = 'music/Yoann Laulan - 1-Dead Cells.mp3'
         self.setting = settings.Settings()
         self.setting.load_settings()
+        self.timer = Timer(pygame.time.get_ticks())
+
 
     def play_music(self):  # музыка
         pygame.mixer.music.load(self.music_path)  # Укажите путь к вашему файлу
@@ -44,6 +47,7 @@ class Level:
         # Отрисовка границ коллайдера игрока
         # self.player.draw_collider(self.display_surface)
         debug(self.player.direction)
+        self.timer.draw(True)
 
 
 class YSortCameraGroup(pygame.sprite.Group):

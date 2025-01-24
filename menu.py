@@ -12,7 +12,7 @@ pygame.init()
 # Настройки экрана
 WIDTH, HEIGHT = 735, 413
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Berserk Game")
+pygame.display.set_caption("Game")
 
 # Загрузка изображения фона
 background_image = pygame.image.load("image/background.jpg")
@@ -105,7 +105,7 @@ def scene_menu():
 
     # Настройка главного меню
     pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Berserk Game")
+    pygame.display.set_caption("Game")
 
     running = True
     global current_index_scene
