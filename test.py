@@ -180,7 +180,7 @@ while True:
 
     pygame.display.flip()  # Обновление экрана
     pygame.time.delay(100)  # Задержка для управления скоростью анимации'''
-import pygame
+'''import pygame
 import sys
 
 # Инициализация Pygame
@@ -218,4 +218,59 @@ while True:
     screen.blit(timer_text, (screen_width // 2, screen_height // 2))  # Отображение текста
 
     pygame.display.flip()  # Обновление экрана
-    pygame.time.Clock().tick(60)  # Ограничение FPS до 60
+    pygame.time.Clock().tick(60)  # Ограничение FPS до 60'''
+
+import pygame
+import sys
+
+# Инициализация Pygame
+pygame.init()
+
+# Настройки окна
+width, height = 400, 300
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Секундомер")
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+# Шрифт
+font = pygame.font.Font(None, 74)
+
+# Переменные для секундомера
+start_ticks = pygame.time.get_ticks()  # Начальное время
+running = False
+
+# Основной цикл
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:  # Нажмите пробел для старта/остановки
+                running = not running
+                if running:
+                    start_ticks = pygame.time.get_ticks()  # Сброс времени
+
+    screen.fill(WHITE)
+
+    if running:
+        elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000  # Прошедшее время в секундах
+    else:
+        elapsed_time = 0
+
+    # Форматирование времени до сотых
+    timer_text = f"{elapsed_time:.2f}"  # Форматируем до двух знаков после запятой
+
+    # Создание текста с черной обводкой
+    timer_surface = font.render(timer_text, True, BLACK)
+    outline_surface = font.render(timer_text, True, WHITE)
+
+    # Рисуем обводку (сначала черный текст, затем белый)
+    screen.blit(timer_surface, (width // 2 - timer_surface.get_width() // 2 - 2, 10))  # Черная обводка
+    screen.blit(outline_surface, (width // 2.05- outline_surface.get_width() // 2, 10))  # Белый текст
+
+    pygame.display.flip()
+    pygame.time.delay(100)  # Задержка для уменьшения нагрузки на процессор
