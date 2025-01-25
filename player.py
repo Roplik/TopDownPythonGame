@@ -104,18 +104,23 @@ class Player(pygame.sprite.Sprite):
             self.speed = 8
         else:
             self.speed = 5
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             self.direction.y = -1
             self.direction_anim = "up"
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self.direction.y = 1
             self.direction_anim = "down"
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.direction.x = 1
             self.direction_anim = "right"
-        elif keys[pygame.K_LEFT]:
+        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.direction.x = -1
             self.direction_anim = "left"
+        # Проверка на одновременное нажатие противоположных клавиш
+        if (keys[pygame.K_w] or keys[pygame.K_UP]) and (keys[pygame.K_s] or keys[pygame.K_DOWN]):
+            self.direction.y = 0  # Остановка по оси Y
+        if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and (keys[pygame.K_d] or keys[pygame.K_RIGHT]):
+            self.direction.x = 0  # Остановка по оси X
 
     def collision(self, direction):
         # Проверка на столкновения с препятствиями

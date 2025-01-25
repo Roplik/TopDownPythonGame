@@ -148,6 +148,7 @@ def setting_window():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 setting_menu.running = False
+                sys.exit()
 
         setting_menu.win.fill((255, 255, 255))  # Очистка экрана
         setting_menu.win.blit(setting_menu.background_image, (0, 0))  # Отрисовка фона
@@ -166,13 +167,34 @@ def setting_window():
     current_index_scene = 0
 
 
+def run_game():
+    global current_index_scene
+    game_run = True
+    # Основной цикл игры
+    while game_run:
+        pygame.time.Clock().tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    game_run = False
+        if game_run:
+            game.level.run()
+            pygame.display.flip()  # Обновление экрана
+            # self.draw_colliders()
+
+    current_index_scene = 0
+
+
 # Смена сцен
 while current_index_scene is not None:
     if current_index_scene == 0:
         scene_menu()
     elif current_index_scene == 1:
         game = Game()
-        game.run_game()
+        run_game()
     elif current_index_scene == 2:
         setting_window()
 

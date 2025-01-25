@@ -27,20 +27,3 @@ class Game:
         for sprite in obstacles_sprites:
             # Отрисовка коллайдера препятствия
             pygame.draw.rect(self.screen, (255, 0, 0), sprite.rect, 2)  # Красный прямоугольник
-
-    def run_game(self):
-
-        # Основной цикл игры
-        while True:
-            pygame.time.Clock().tick(60)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                    return
-
-            self.level.run()
-            # self.draw_colliders()
-
-            # Обновление экрана
-            pygame.display.flip()
