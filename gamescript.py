@@ -1,8 +1,6 @@
 import os
 import sys
-
 import pygame
-
 import level1
 from settings import Settings
 from player import Player

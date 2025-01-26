@@ -20,13 +20,14 @@ running = False  # Флаг, указывающий, идет ли таймер
 class Timer:
     def __init__(self, start_ticks):
         self.start_ticks = start_ticks
+        self.second = 0
 
     def draw(self, running):
         if running:
             seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000  # Переводим в секунды
         else:
             seconds = 0  # Если таймер не запущен, показываем 0 секунд
-
+        self.second = seconds
         timer_text = font.render(f"Время: {seconds:.2f} секунд", True, (255, 255, 255))
 
         # Отрисовка обводки текста
