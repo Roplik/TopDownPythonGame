@@ -1,7 +1,5 @@
 import pygame
-
 import settings
-
 from tile import Tile
 from player import Player
 from debug import debug
@@ -19,7 +17,11 @@ class Level:
         self.setting = settings.Settings()
         self.setting.load_settings()
         self.timer = Timer(pygame.time.get_ticks())
+        self.complete_level = False
 
+    def win_timer(self):
+        if self.timer.second >= 3:
+            self.complete_level = True
 
     def play_music(self):  # музыка
         pygame.mixer.music.load(self.music_path)  # Укажите путь к вашему файлу
@@ -48,6 +50,7 @@ class Level:
         # self.player.draw_collider(self.display_surface)
         debug(self.player.direction)
         self.timer.draw(True)
+        self.win_timer()
 
 
 class YSortCameraGroup(pygame.sprite.Group):

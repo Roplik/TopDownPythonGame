@@ -167,9 +167,10 @@ def setting_window():
     current_index_scene = 0
 
 
-def run_game():
+def run_game(zxc):
     global current_index_scene
     game_run = True
+    complete_game = False
     # Основной цикл игры
     while game_run:
         pygame.time.Clock().tick(60)
@@ -180,12 +181,72 @@ def run_game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     game_run = False
+                    current_index_scene = 0
+        if zxc.level.complete_level:
+            game_run = False
+            current_index_scene = 3
         if game_run:
             game.level.run()
             pygame.display.flip()  # Обновление экрана
             # self.draw_colliders()
 
+
+# ====================================СЦЕНА_ПОБЕДЫ=====================================================================#
+# ВРЕМЯ ЧАС НОЧИ, МНЕ ЛЕНЬ ПИСАТЬ ОТДЕЛЬНЫЙ КЛАСС, ПОТОМ КАК НИТЬ С ЭТИМ РАЗБЕРУСЬ
+def back_to_menu():
+    global current_index_scene
     current_index_scene = 0
+
+
+# Функция для отрисовки текста
+def draw_text(text, font, surface, x, y, color):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.center = (x, y)
+    surface.blit(textobj, textrect)
+
+
+def win_screen():
+    # Константы
+    running = True
+    WIDTH, HEIGHT = 800, 600
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    FONT_SIZE = 48
+
+    # Создание окна
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Победа!")
+
+    # Шрифт
+    font = pygame.font.Font(None, FONT_SIZE)
+
+    # Функция для отрисовки текста
+
+    # Кнопка
+    button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
+    # Основной цикл
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(event.pos):
+                    running = False
+                    back_to_menu()
+        # Заполнение фона
+        screen.fill(WHITE)
+        # Отрисовка текста
+        draw_text("Поздравляю, вы победили!", font, screen, WIDTH // 2, HEIGHT // 2, BLACK)
+        # Отрисовка кнопки
+        pygame.draw.rect(screen, BLACK, button_rect)
+        draw_text("В меню", font, screen, WIDTH // 2, HEIGHT // 2 + 75, WHITE)  # Текст кнопки белый
+        # Обновление экрана
+        pygame.display.flip()
+
+
+# =====================================================================================================================#
 
 
 # Смена сцен
@@ -194,8 +255,10 @@ while current_index_scene is not None:
         scene_menu()
     elif current_index_scene == 1:
         game = Game()
-        run_game()
+        run_game(game)
     elif current_index_scene == 2:
         setting_window()
+    elif current_index_scene == 3:
+        win_screen()
 
 sys.exit()
