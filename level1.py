@@ -22,6 +22,7 @@ class Level:
     def win_timer(self):
         if self.timer.second >= 3:
             self.complete_level = True
+            pygame.mixer.music.stop()
 
     def play_music(self):  # музыка
         pygame.mixer.music.load(self.music_path)  # Укажите путь к вашему файлу
