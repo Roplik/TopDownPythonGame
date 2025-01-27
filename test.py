@@ -220,7 +220,7 @@ while True:
     pygame.display.flip()  # Обновление экрана
     pygame.time.Clock().tick(60)  # Ограничение FPS до 60'''
 
-import pygame
+'''import pygame
 import sys
 
 # Инициализация Pygame
@@ -274,3 +274,96 @@ while True:
 
     pygame.display.flip()
     pygame.time.delay(100)  # Задержка для уменьшения нагрузки на процессор
+'''
+import pygame
+from PIL import Image
+import sys
+
+# Инициализация Pygame
+pygame.init()
+
+# Установка размеров окна
+screen_width = 1200  # Увеличили ширину
+screen_height = 800  # Увеличили высоту
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("GIF с звуком в Pygame")
+
+
+# Загрузка гифки и создание списка кадров
+def load_gif(filename, scale_size):
+    img = Image.open(filename)
+    frames = []
+    try:
+        while True:
+            frame = img.copy()
+            frame = frame.convert("RGBA")
+            frame_data = pygame.image.fromstring(frame.tobytes(), frame.size, "RGBA")
+            # Изменение размера кадра
+            frame_data = pygame.transform.scale(frame_data, scale_size)
+            frames.append(frame_data)
+            img.seek(len(frames))  # Переход к следующему кадру
+    except EOFError:
+        pass  # Конец гифки
+    return frames
+
+
+# Размеры для уменьшенной гифки
+gif_scale_size = (300, 300)  # Укажите желаемые размеры (ширина, высота)
+
+# Загрузка кадров гифки
+gif_frames = load_gif("image/ultrakill-death.gif", gif_scale_size)
+current_frame = 0
+frame_count = len(gif_frames)
+
+# Загрузка звука
+pygame.mixer.init()
+sound = pygame.mixer.Sound("music/ultrakill-ha-computer-laughing.mp3")
+
+# Основной цикл
+clock = pygame.time.Clock()
+last_sound_time = pygame.time.get_ticks()  # Время последнего воспроизведения звука
+
+# Шрифты
+font = pygame.font.Font(None, 74)  # Шрифт для надписи "Вы мертвы"
+restart_font = pygame.font.Font(None, 48)  # Шрифт для надписи "Нажмите [R]"
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:  # Перезапуск при нажатии R
+                current_frame = 0
+                last_sound_time = pygame.time.get_ticks()
+
+    # Очистка экрана (черный фон)
+    screen.fill((0, 0, 0))
+
+    # Отображение текущего кадра по центру экрана
+    if frame_count > 0:
+        frame_rect = gif_frames[current_frame].get_rect(center=(screen_width // 2, screen_height // 2))
+        screen.blit(gif_frames[current_frame], frame_rect)
+
+        # Переход к следующему кадру
+        current_frame = (current_frame + 1) % frame_count
+
+    # Проверка времени для воспроизведения звука
+    current_time = pygame.time.get_ticks()
+    if current_time - last_sound_time >= 1000:  # Каждую секунду
+        sound.play()
+        last_sound_time = current_time
+
+    # Отображение текста "Вы мертвы" сверху
+    dead_text = font.render("Вы мертвы", True, (255, 0, 0))  # Красный цвет
+    screen.blit(dead_text, (screen_width // 2 - dead_text.get_width() // 2, 50))
+
+    # Отображение текста "Нажмите [R] чтобы начать уровень сначала" снизу
+    restart_text = restart_font.render("Нажмите [R] чтобы начать уровень сначала", True, (255, 255, 255))  # Белый цвет
+    screen.blit(restart_text, (screen_width // 2 - restart_text.get_width() // 2, screen_height - 100))
+
+    # Обновление экрана
+    pygame.display.flip()
+
+    # Установка FPS (количество кадров в секунду)
+    clock.tick(14.3)  # Можно изменить значение для регулировки скорости анимации

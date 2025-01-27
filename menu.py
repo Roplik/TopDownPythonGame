@@ -5,6 +5,7 @@ import MenuSetting
 from gamescript import *
 import settings
 from MenuSetting import *
+from you_are_dead import *
 
 # Инициализация Pygame
 pygame.init()
@@ -184,7 +185,7 @@ def run_game(zxc):
                     current_index_scene = 0
         if zxc.level.complete_level:
             game_run = False
-            current_index_scene = 3
+            current_index_scene = 4
         if game_run:
             game.level.run()
             pygame.display.flip()  # Обновление экрана
@@ -248,6 +249,23 @@ def win_screen():
 
 # =====================================================================================================================#
 
+def dead_screen():
+    global current_index_scene
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:  # Перезапуск при нажатии R
+                    current_index_scene = 1
+                    running = False
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    current_index_scene = 0
+        dead_screen_class.run_dead_screen()
+
 
 # Смена сцен
 while current_index_scene is not None:
@@ -260,5 +278,8 @@ while current_index_scene is not None:
         setting_window()
     elif current_index_scene == 3:
         win_screen()
+    elif current_index_scene == 4:
+        dead_screen_class = DeadScreen()
+        dead_screen()
 
 sys.exit()
