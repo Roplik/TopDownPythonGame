@@ -185,6 +185,9 @@ def run_game(zxc):
                     current_index_scene = 0
         if zxc.level.complete_level:
             game_run = False
+            current_index_scene = 3
+        elif zxc.level.player_die:
+            game_run = False
             current_index_scene = 4
         if game_run:
             game.level.run()
