@@ -16,6 +16,16 @@ class Player(pygame.sprite.Sprite):
         self.sprite_height = 32  # высота одного спрайта
         self.sprites_per_row = 4  # количество спрайтов в строке
 
+        # Инициализация жизней и здоровья
+        self.max_health = 100
+        self.current_health = self.max_health
+        self.die = False
+
+        # Задержка перед получением следующего урона
+        self.invincible_duration = 2000  # 2000 мс (2 секунды)
+        self.last_damage_time = 0
+        self.invincible = False
+
         # Загружаем и масштабируем спрайты
         self.up_run = pygame.transform.scale(
             pygame.image.load("Char_Sprites/char_run_up_anim_strip_6.png").convert_alpha(),
@@ -62,6 +72,20 @@ class Player(pygame.sprite.Sprite):
             'left': [self.get_sprite(self.left_idle, i) for i in range(6)],
             'right': [self.get_sprite(self.right_idle, i) for i in range(6)]
         }
+
+    def take_damage(self, amount):
+        if not self.invincible:  # Проверяем, не находится ли игрок в неуязвимости
+            self.current_health -= amount
+            self.last_damage_time = pygame.time.get_ticks()  # Обновляем время последнего урона
+            self.invincible = True
+            if self.current_health <= 0:
+                self.die = True
+
+    def invincible_switch(self):
+        if self.invincible:
+            # Проверяем, истекло ли время неуязвимости
+            if pygame.time.get_ticks() - self.last_damage_time > self.invincible_duration:
+                self.invincible = False
 
     def get_sprite(self, image, index):
         return image.subsurface(index * self.sprite_width, 0, self.sprite_width, self.sprite_height)
@@ -153,3 +177,5 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move()
         self.animate()
+        self.invincible_switch()
+

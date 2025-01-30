@@ -4,7 +4,8 @@ from tile import Tile
 from player import Player
 from debug import debug
 from support import *
-from gui import Timer
+from gui import *
+from Mobs import *
 
 
 class Level:
@@ -18,11 +19,15 @@ class Level:
         self.setting.load_settings()
         self.timer = Timer(pygame.time.get_ticks())
         self.complete_level = False
+        self.player_die = False
 
-    def win_timer(self):
-        if self.timer.second >= 3:
-            self.complete_level = True
+    def check_change_scene(self):
+        if self.timer.second >= 15:
             pygame.mixer.music.stop()
+            self.complete_level = True
+        elif self.player.die:
+            pygame.mixer.music.stop()
+            self.player_die = True
 
     def play_music(self):  # музыка
         pygame.mixer.music.load(self.music_path)  # Укажите путь к вашему файлу
@@ -42,6 +47,7 @@ class Level:
 
         # Создаем игрока после загрузки карты
         self.player = Player((650, 1000), [self.visible_sprites], self.obstacles_sprites)
+        self.Skelet = Skelet((650, 900), [self.visible_sprites], self.player)
 
     def run(self):
         self.display_surface.fill((0, 0, 0))  # Очистка экрана
@@ -51,7 +57,9 @@ class Level:
         # self.player.draw_collider(self.display_surface)
         debug(self.player.direction)
         self.timer.draw(True)
-        self.win_timer()
+        draw_health_and_lives(pygame.display.get_surface(),self.player)
+        self.check_change_scene()
+        self.Skelet.update()
 
 
 class YSortCameraGroup(pygame.sprite.Group):

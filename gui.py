@@ -42,3 +42,9 @@ class Timer:
         screen.blit(outline_text, outline_rect)
         # Затем основной текст
         screen.blit(timer_text, text_rect)
+
+
+def draw_health_and_lives(screen, player):
+    font = pygame.font.Font(None, 36)  # Шрифт для текста
+    health_text = font.render(f'Health: {player.current_health}/{player.max_health}', True, (255, 255, 255))
+    screen.blit(health_text, (10, 700))  # Отображение здоровья в верхнем левом углу

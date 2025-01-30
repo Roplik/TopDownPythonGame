@@ -16,7 +16,7 @@ class DeadScreen:
         self.screen_width = self.settings.screen_width  # Увеличили ширину
         self.screen_height = self.settings.screen_height  # Увеличили высоту
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("GIF с звуком в Pygame")
+        pygame.display.set_caption("YOU ARE DEAD")
         # Размеры для уменьшенной гифки
         self.gif_scale_size = (300, 300)  # Укажите желаемые размеры (ширина, высота)
 
