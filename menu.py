@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
 # Загрузка изображения фона
-background_image = pygame.image.load("image/background.jpg")
+background_image = pygame.image.load("image/background_yarnam.jpg")
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
 # Цвета
@@ -101,7 +101,7 @@ menu = Menu()
 def scene_menu():
     menu.reload_settings()
     # Загрузка музыки
-    pygame.mixer.music.load("music/Miura Jam - Tell Me Why (Berserk).mp3")
+    pygame.mixer.music.load("music/Dark Souls 3 - Main Theme.mp3")
     pygame.mixer.music.play(-1)
 
     # Настройка главного меню
