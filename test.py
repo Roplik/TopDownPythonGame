@@ -275,7 +275,7 @@ while True:
     pygame.display.flip()
     pygame.time.delay(100)  # Задержка для уменьшения нагрузки на процессор
 '''
-import pygame
+'''import pygame
 from PIL import Image
 import sys
 
@@ -367,3 +367,66 @@ while True:
 
     # Установка FPS (количество кадров в секунду)
     clock.tick(14.3)  # Можно изменить значение для регулировки скорости анимации
+'''
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, pos, groups, obstacles_sprites):
+        super().__init__(groups)
+        self.image = pygame.image.load("Char_Sprites/char_idle_up_anim.gif").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (32, 32))
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, -26)
+
+        self.direction = pygame.math.Vector2(0, 0)
+        self.speed = 5
+
+        # Инициализация жизней и здоровья
+        self.max_health = 100
+        self.current_health = self.max_health
+        self.lives = 3
+
+        # Задержка перед получением следующего урона
+        self.invincible_duration = 2000  # 2000 мс (2 секунды)
+        self.last_damage_time = 0
+        self.invincible = False
+
+        # Радиус атаки
+        self.attack_radius = 100
+
+    def find_nearest_enemy(self, enemies):
+        nearest_enemy = None
+        min_distance = float('inf')
+
+        for enemy in enemies:
+            distance = math.hypot(self.rect.centerx - enemy.rect.centerx, self.rect.centery - enemy.rect.centery)
+            if distance < min_distance:
+                min_distance = distance
+                nearest_enemy = enemy
+
+        return nearest_enemy
+
+    def attack(self, enemies):
+        nearest_enemy = self.find_nearest_enemy(enemies)
+        if nearest_enemy:
+            distance = math.hypot(self.rect.centerx - nearest_enemy.rect.centerx,
+                                  self.rect.centery - nearest_enemy.rect.centery)
+            if distance <= self.attack_radius:
+                # Наносим урон ближайшему врагу
+                nearest_enemy.take_damage(10)  # Пример нанесения урона
+
+    def take_damage(self, amount):
+        current_time = pygame.time.get_ticks()
+        if not self.invincible or current_time - self.last_damage_time > self.invincible_duration:
+            self.current_health -= amount
+            self.last_damage_time = current_time
+            self.invincible = True
+            if self.current_health <= 0:
+                self.die()
+
+    def die(self):
+        self.lives -= 1
+        if self.lives > 0:
+            self.current_health = self.max_health
+        else:
+            self.kill()

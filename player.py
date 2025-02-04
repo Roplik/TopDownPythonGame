@@ -1,8 +1,9 @@
 import pygame
+import math
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacles_sprites):
+    def __init__(self, pos, groups, obstacles_sprites, enemy_sprites):
         super().__init__(groups)
         self.image = pygame.image.load("Char_Sprites/char_idle_up_anim.gif").convert_alpha()
         self.image = pygame.transform.scale(self.image, (32, 32))
@@ -25,6 +26,13 @@ class Player(pygame.sprite.Sprite):
         self.invincible_duration = 2000  # 2000 мс (2 секунды)
         self.last_damage_time = 0
         self.invincible = False
+
+        self.enemies_group = enemy_sprites
+
+        # Таймер для атаки
+        self.attack_cooldown = 1000  # Интервал между атаками (в миллисекундах)
+        self.last_attack_time = 0  # Время последней атаки
+        self.attack_radius = 100
 
         # Загружаем и масштабируем спрайты
         self.up_run = pygame.transform.scale(
@@ -173,9 +181,36 @@ class Player(pygame.sprite.Sprite):
         collider_color = (255, 0, 0)  # Красный цвет для коллайдера
         pygame.draw.rect(surface, collider_color, self.rect, 2)  # Рисует прямоугольник вокруг коллайдера
 
+    def find_nearest_enemy(self):
+        nearest_enemy = None
+        min_distance = float('inf')
+
+        for enemy in self.enemies_group:
+            distance = math.hypot(self.rect.centerx - enemy.rect.centerx, self.rect.centery - enemy.rect.centery)
+            if distance < min_distance:
+                min_distance = distance
+                nearest_enemy = enemy
+        print(self.enemies_group)
+        return nearest_enemy
+
+    def auto_attack(self):
+        current_time = pygame.time.get_ticks()  # Получаем текущее время
+        if current_time - self.last_attack_time >= self.attack_cooldown:
+            self.attack()  # Вызываем метод атаки
+            self.last_attack_time = current_time  # Обновляем время последней атаки
+
+    def attack(self):
+        nearest_enemy = self.find_nearest_enemy()
+        if nearest_enemy:
+            distance = math.hypot(self.rect.centerx - nearest_enemy.rect.centerx,
+                                  self.rect.centery - nearest_enemy.rect.centery)
+            if distance <= self.attack_radius:
+                # Наносим урон ближайшему врагу
+                nearest_enemy.take_damage(10)  # Пример нанесения урона
+
     def update(self):
         self.input()
         self.move()
         self.animate()
         self.invincible_switch()
-
+        self.auto_attack()
