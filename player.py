@@ -2,6 +2,12 @@ import pygame
 import math
 
 
+def draw_text(surface, text, pos, font_size=24, color=(255, 255, 255)):
+    font = pygame.font.Font(None, font_size)  # Шрифт и размер текста
+    text_surface = font.render(text, True, color)  # Создаём поверхность с текстом
+    surface.blit(text_surface, pos)  # Отрисовываем текст на экране
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacles_sprites, enemy_sprites):
         super().__init__(groups)
@@ -12,6 +18,9 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2(0, 0)
         self.speed = 5
+        self.walk_speed = 5
+        self.run_speed = 8
+        self.damage = 50
 
         self.sprite_width = 32  # ширина одного спрайта
         self.sprite_height = 32  # высота одного спрайта
@@ -34,6 +43,9 @@ class Player(pygame.sprite.Sprite):
         self.last_attack_time = 0  # Время последней атаки
         self.attack_radius = 100
 
+        self.exp = 0
+        self.level = 1
+        self.exp_to_next_level = 100
         # Загружаем и масштабируем спрайты
         self.up_run = pygame.transform.scale(
             pygame.image.load("Char_Sprites/char_run_up_anim_strip_6.png").convert_alpha(),
@@ -80,6 +92,78 @@ class Player(pygame.sprite.Sprite):
             'left': [self.get_sprite(self.left_idle, i) for i in range(6)],
             'right': [self.get_sprite(self.right_idle, i) for i in range(6)]
         }
+
+    def gain_exp(self):
+        # Проверяем, сколько уровней игрок может поднять
+        while self.exp >= self.exp_to_next_level:
+            self.exp -= self.exp_to_next_level  # Уменьшаем опыт на необходимое количество
+            self.level_up()  # Поднимаем уровень
+
+    def level_up(self):
+        self.level += 1
+        self.exp_to_next_level = int(self.exp_to_next_level * 1.5)  # Увеличиваем требуемый опыт для следующего уровня
+        self.show_level_up_menu()  # Показываем меню выбора улучшений
+
+    def show_level_up_menu(self):
+        screen = pygame.display.get_surface()
+        # Создаём поверхность для меню
+        menu_surface = pygame.Surface((300, 200))
+        menu_surface.fill((50, 50, 50))
+        font = pygame.font.Font(None, 36)
+
+        # Текст улучшений
+        text1 = font.render("1. Increase Health", True, (255, 255, 255))
+        text2 = font.render("2. Increase Speed", True, (255, 255, 255))
+        text3 = font.render("3. Increase Damage", True, (255, 255, 255))
+        text4 = font.render("4.Increase Attak speed", True, (255, 255, 255))
+
+        # Отрисовка текста
+        menu_surface.blit(text1, (20, 20))
+        menu_surface.blit(text2, (20, 70))
+        menu_surface.blit(text3, (20, 120))
+        menu_surface.blit(text4, (20, 170))
+
+        # Отображение меню на экране
+        screen.blit(menu_surface, (250, 200))
+        pygame.display.flip()
+
+        # Ожидание выбора игрока
+        choice = None
+        while choice is None:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        choice = "1"
+                    elif event.key == pygame.K_2:
+                        choice = "2"
+                    elif event.key == pygame.K_3:
+                        choice = "3"
+                    elif event.key == pygame.K_4:
+                        choice = "4"
+
+        self.apply_upgrade(choice)
+
+    def apply_upgrade(self, choice):
+        if choice == "1":
+            self.max_health += 5
+            self.current_health = self.max_health
+            print(self.max_health)
+            print("Health increased!")
+        elif choice == "2":
+            self.walk_speed += 0.2
+            self.run_speed += 0.2
+            print(self.walk_speed)
+            print("Speed increased!")
+        elif choice == "3":
+            self.damage += 5
+            print(self.damage)
+            print("Damage increased!")
+        elif choice == "4":
+            self.attack_cooldown -= 5
+            print(self.attack_cooldown)
+            print("Attak speed increased!")
+        else:
+            print("Invalid choice. No upgrade applied.")
 
     def take_damage(self, amount):
         if not self.invincible:  # Проверяем, не находится ли игрок в неуязвимости
@@ -133,9 +217,9 @@ class Player(pygame.sprite.Sprite):
         self.direction.x = 0
         self.direction.y = 0
         if keys[pygame.K_LSHIFT]:
-            self.speed = 8
+            self.speed = self.run_speed
         else:
-            self.speed = 5
+            self.speed = self.walk_speed
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             self.direction.y = -1
             self.direction_anim = "up"
@@ -190,7 +274,6 @@ class Player(pygame.sprite.Sprite):
             if distance < min_distance:
                 min_distance = distance
                 nearest_enemy = enemy
-        print(self.enemies_group)
         return nearest_enemy
 
     def auto_attack(self):
@@ -206,7 +289,8 @@ class Player(pygame.sprite.Sprite):
                                   self.rect.centery - nearest_enemy.rect.centery)
             if distance <= self.attack_radius:
                 # Наносим урон ближайшему врагу
-                nearest_enemy.take_damage(10)  # Пример нанесения урона
+                nearest_enemy.take_damage(self.damage)  # Пример нанесения урона
+
 
     def update(self):
         self.input()
@@ -214,3 +298,4 @@ class Player(pygame.sprite.Sprite):
         self.animate()
         self.invincible_switch()
         self.auto_attack()
+        self.gain_exp()

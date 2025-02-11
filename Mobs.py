@@ -7,10 +7,12 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
+frames = []
+
 
 # Функция для разделения спрайт-листа
 def split_spritesheet(spritesheet, rows, cols, width, height):
-    frames = []
+    global frames
     for row in range(rows):
         for col in range(cols):
             x = col * width
@@ -21,25 +23,22 @@ def split_spritesheet(spritesheet, rows, cols, width, height):
 
 
 # Класс моба
-class Skelet(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, player):
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, pos, groups, player, image, health, damage, speed, exp):
         super().__init__(groups)
-
-        self.spritesheet = pygame.image.load("sprites/Dungeon_Character_2.png").convert_alpha()
-        self.frames = split_spritesheet(self.spritesheet, rows=2, cols=7, width=16, height=16)
-        self.orig_images = self.frames[13]
-        self.orig_images = pygame.transform.scale(self.orig_images, (32, 32))
-        self.image = self.orig_images
+        self.orig_images = image
+        self.image = image
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, -10)  # Уменьшаем hitbox для столкновений
-        self.speed = 4  # Скорость движения врага
+        self.speed = speed  # Скорость движения врага
         self.player = player  # Ссылка на игрока
         self.chasing = False  # Флаг для отслеживания состояния погони
-        self.damage = 50
-        self.health = 100
-        self.max_health = 100
+        self.damage = damage
+        self.health = health
+        self.max_health = health
         self.direction_word = "right"
         self.hit_particles = []  # Список для хранения частиц удара
+        self.give_exp = exp
 
     def main(self):
         # Проверка расстояния до игрока
@@ -111,7 +110,30 @@ class Skelet(pygame.sprite.Sprite):
                 self.hit_particles.remove(particle)  # Удаляем "мёртвые" частицы
 
     def die(self):
+        self.player.exp += self.give_exp
+        print(self.player.exp)
         self.kill()
 
     def update(self):
         self.main()
+
+
+# Класс Skelet
+class Skelet(Enemy):
+    def __init__(self, pos, groups, player):
+        global frames
+        # Загружаем спрайты для скелета
+        orig_images = frames[13]
+        orig_images = pygame.transform.scale(orig_images, (32, 32))
+
+        # Вызываем конструктор базового класса
+        super().__init__(
+            pos=pos,
+            groups=groups,
+            player=player,
+            image=orig_images,  # Спрайт скелета
+            health=100,  # Здоровье скелета
+            damage=50,  # Урон скелета
+            speed=4,  # Скорость скелета
+            exp=1000000  # Сколько опыта дается за склета
+        )

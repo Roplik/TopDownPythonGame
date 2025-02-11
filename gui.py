@@ -44,7 +44,20 @@ class Timer:
         screen.blit(timer_text, text_rect)
 
 
-def draw_health_and_lives(screen, player):
-    font = pygame.font.Font(None, 36)  # Шрифт для текста
-    health_text = font.render(f'Health: {player.current_health}/{player.max_health}', True, (255, 255, 255))
-    screen.blit(health_text, (10, 700))  # Отображение здоровья в верхнем левом углу
+def draw_text(surface, text, pos, font_size=24, color=(255, 255, 255)):
+    font = pygame.font.Font(None, font_size)  # Шрифт и размер текста
+    text_surface = font.render(text, True, color)  # Создаём поверхность с текстом
+    surface.blit(text_surface, pos)  # Отрисовываем текст на экране
+
+
+def player_stats(screen, player):
+    # Позиция текста (левый нижний угол)
+    pos_x = 20  # Отступ слева
+    pos_y = screen.get_height() - 150  # Отступ снизу
+
+    # Отображаем характеристики
+    draw_text(screen, f"Health: {player.current_health}/{player.max_health}", (pos_x, pos_y))
+    draw_text(screen, f"Level: {player.level}", (pos_x, pos_y + 30))
+    draw_text(screen, f"Exp: {player.exp}/{player.exp_to_next_level}", (pos_x, pos_y + 60))
+    draw_text(screen, f"Damage: {player.damage}", (pos_x, pos_y + 90))
+    draw_text(screen, f"Speed: {round(player.speed,3)}", (pos_x, pos_y + 120))
