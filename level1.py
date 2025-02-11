@@ -7,6 +7,8 @@ from support import *
 from gui import *
 from Mobs import *
 import random
+from Mobs import split_spritesheet
+
 
 class Level:
     def __init__(self):
@@ -14,6 +16,8 @@ class Level:
         self.visible_sprites = YSortCameraGroup()
         self.enemy_array = pygame.sprite.Group()
         self.obstacles_sprites = pygame.sprite.Group()
+        self.spritesheet_mobs = pygame.image.load("sprites/Dungeon_Character_2.png").convert_alpha()
+        self.create_split_spritesheet()
         self.create_map()
         self.music_path = 'music/Yoann Laulan - 1-Dead Cells.mp3'
         self.setting = settings.Settings()
@@ -21,6 +25,9 @@ class Level:
         self.timer = Timer(pygame.time.get_ticks())
         self.complete_level = False
         self.player_die = False
+
+    def create_split_spritesheet(self):
+        split_spritesheet(self.spritesheet_mobs, rows=2, cols=7, width=16, height=16)
 
     def check_change_scene(self):
         if self.timer.second >= 1500:
@@ -58,7 +65,7 @@ class Level:
         # self.player.draw_collider(self.display_surface)
         debug(self.player.direction)
         self.timer.draw(True)
-        draw_health_and_lives(pygame.display.get_surface(), self.player)
+        player_stats(pygame.display.get_surface(), self.player)
         self.check_change_scene()
 
 
@@ -112,4 +119,3 @@ class YSortCameraGroup(pygame.sprite.Group):
                 enemy_group.add(new_mob)
                 player.enemies_group.add(new_mob)
                 self.last_spawn_time = current_time  # Обновляем время последнего появления
-
