@@ -1,6 +1,7 @@
 import pygame
 import math
-from particl import HitParticle
+from particl import *
+import random
 
 # Цвета
 WHITE = (255, 255, 255)
@@ -24,7 +25,7 @@ def split_spritesheet(spritesheet, rows, cols, width, height):
 
 # Класс моба
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, player, image, health, damage, speed, exp):
+    def __init__(self, pos, groups, player, image, health, damage, speed, exp, distance):
         super().__init__(groups)
         self.orig_images = image
         self.image = image
@@ -39,13 +40,14 @@ class Enemy(pygame.sprite.Sprite):
         self.direction_word = "right"
         self.hit_particles = []  # Список для хранения частиц удара
         self.give_exp = exp
+        self.distance = distance
 
     def main(self):
         # Проверка расстояния до игрока
         distance_to_player = self.rect.centerx - self.player.rect.centerx, self.rect.centery - self.player.rect.centery
         distance = math.hypot(*distance_to_player)
         # Если игрок находится в области видимости (например, 100 пикселей)
-        if distance < 300:
+        if distance < self.distance:
             self.chasing = True
         else:
             self.chasing = False
@@ -135,5 +137,97 @@ class Skelet(Enemy):
             health=100,  # Здоровье скелета
             damage=50,  # Урон скелета
             speed=4,  # Скорость скелета
-            exp=1000000  # Сколько опыта дается за склета
+            exp=1000000,  # Сколько опыта дается за склета
+            distance=300
         )
+
+
+class LostSoul(Enemy):
+    def __init__(self, pos, groups, player):
+        global frames
+        orig_images = frames[8]
+        orig_images = pygame.transform.scale(orig_images, (32, 32))
+
+        # Вызываем конструктор базового класса
+        super().__init__(
+            pos=pos,
+            groups=groups,
+            player=player,
+            image=orig_images,
+            health=100,
+            damage=50,
+            speed=2,
+            exp=1000000,
+            distance=1000
+        )
+        self.boss = None
+
+    def create_hit_particles(self):
+        # Создаём 10 частиц при ударе
+        for _ in range(10):
+            particle = CytoplasmParticle(self.rect.center)
+            self.hit_particles.append(particle)
+
+    def die(self):
+        if self.boss:
+            self.boss.minions_count -= 1
+        super().die()
+
+
+# Класс босса
+class Boss(Enemy):
+    def __init__(self, pos, groups, player):
+        orig_images = frames[9]
+        boss_image = pygame.transform.scale(orig_images, (32, 32))
+        boss_image = pygame.transform.scale(boss_image, (64, 64))  # Босс больше обычных врагов
+
+        # Вызываем конструктор базового класса
+        super().__init__(
+            pos=pos,
+            groups=groups,
+            player=player,
+            image=boss_image,
+            health=500,  # Больше здоровья
+            damage=50,  # Больше урона
+            speed=2,  # Меньше скорости (босс медленный, но мощный)
+            exp=10,
+            distance=1000
+        )
+
+        # Уникальные атрибуты босса
+        self.last_ability_time = 0  # Время последней способности
+        self.ability_cooldown = 5000  # Задержка между способностями (в миллисекундах)
+        self.minions_count = 0
+        self.max_minions = 6
+
+    def update(self):
+        super().update()  # Вызываем обновление из базового класса
+        self.use_abilities()  # Используем уникальные способности босса
+
+    def create_hit_particles(self):
+        # Создаём 10 частиц при ударе
+        for _ in range(10):
+            particle = BloodParticle(self.rect.center)
+            self.hit_particles.append(particle)
+
+    def use_abilities(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_ability_time > self.ability_cooldown:
+            self.last_ability_time = current_time
+            self.spawn_minions()  # Босс вызывает миньонов
+
+    def spawn_minions(self):
+        if self.minions_count < self.max_minions:
+            # Создаём несколько миньонов вокруг босса
+            for _ in range(3):
+                if self.minions_count >= self.max_minions:
+                    break
+                minion_pos = (self.rect.centerx + random.randint(-50, 50),
+                              self.rect.centery + random.randint(-50, 50))
+                minion = LostSoul(minion_pos, self.groups(), self.player)  # Создаём миньона
+                self.minions_count += 1
+                minion.boss = self
+
+    def die(self):
+        super().die()
+        self.player.win = True

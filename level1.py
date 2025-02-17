@@ -16,6 +16,7 @@ class Level:
         self.visible_sprites = YSortCameraGroup()
         self.enemy_array = pygame.sprite.Group()
         self.obstacles_sprites = pygame.sprite.Group()
+        self.projecti_sprites = pygame.sprite.Group()
         self.spritesheet_mobs = pygame.image.load("sprites/Dungeon_Character_2.png").convert_alpha()
         self.create_split_spritesheet()
         self.create_map()
@@ -25,12 +26,21 @@ class Level:
         self.timer = Timer(pygame.time.get_ticks())
         self.complete_level = False
         self.player_die = False
+        self.start_boss = False
 
     def create_split_spritesheet(self):
         split_spritesheet(self.spritesheet_mobs, rows=2, cols=7, width=16, height=16)
 
     def check_change_scene(self):
-        if self.timer.second >= 1500:
+        if self.timer.second >= 2:
+            if not self.start_boss:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load("music/Berserk OST - Ghosts.mp3")
+                pygame.mixer.music.set_volume(self.setting.volume)
+                pygame.mixer.music.play(-1)
+                self.boss = Boss((650, 300), [self.visible_sprites, self.enemy_array], self.player)
+                self.start_boss = True
+        elif self.player.win:
             pygame.mixer.music.stop()
             self.complete_level = True
         elif self.player.die:
@@ -54,8 +64,8 @@ class Level:
                          tile_index=int(col))
 
         # Создаем игрока после загрузки карты
-        self.player = Player((650, 1000), [self.visible_sprites], self.obstacles_sprites, self.enemy_array)
-        self.Skelet = Skelet((650, 600), [self.visible_sprites, self.enemy_array], self.player)
+        self.player = Player((650, 1000), [self.visible_sprites], self.obstacles_sprites, self.enemy_array,
+                             self.projecti_sprites)
 
     def run(self):
         self.display_surface.fill((0, 0, 0))  # Очистка экрана
@@ -84,7 +94,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
         # Лимит мобов
-        self.max_mobs = 10  # Максимальное количество мобов на карте
+        self.max_mobs = 5  # Максимальное количество мобов на карте
         self.mob_spawn_cooldown = 1  # Задержка между появлениями мобов (в миллисекундах)
         self.last_spawn_time = 0  # Время последнего появления моба
 
@@ -99,7 +109,7 @@ class YSortCameraGroup(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
             # Отрисовка здоровья для врагов
-            if isinstance(sprite, Skelet):  # Проверяем, является ли объект врагом
+            if isinstance(sprite, Enemy):  # Проверяем, является ли объект врагом
                 sprite.draw_health_text(self.display_surface, self.offset)
                 sprite.update_particles(screen, self.offset)
         self.spawn_mobs(player)

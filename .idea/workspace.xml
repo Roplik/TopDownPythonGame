@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="520801b0-4a36-4d8f-bf73-51608cc244e3" name="Changes" comment="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов">
+      <change beforePath="$PROJECT_DIR$/Mobs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Mobs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfg.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cfg.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level1.py" beforeDir="false" afterPath="$PROJECT_DIR$/level1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/particl.py" beforeDir="false" afterPath="$PROJECT_DIR$/particl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Roplik&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Roplik/TopDownPythonGame.git&quot;,
+    &quot;accountId&quot;: &quot;952cf084-85a3-4a88-9568-4dda54eb96f8&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2pR5lPQXf7oKDaytLdLZKqp5XcX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.MenuSetting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.game.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.support.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ropli/Desktop/fordorofeev&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ropli\Desktop\berserk_game\berserk_game\maps" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ropli\Desktop\berserk_game\berserk_game\music" />
+      <recent name="C:\Users\ropli\Desktop\berserk_game\berserk_game\image" />
+      <recent name="C:\Users\ropli\Desktop\berserk_game\berserk_game" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.menu">
+    <configuration name="menu" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="berserk_game" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\ropli\Desktop\berserk_game\berserk_game\menu.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="berserk_game" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-975db3bf15a3-31b6be0877a2-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.18034.82" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="520801b0-4a36-4d8f-bf73-51608cc244e3" name="Changes" comment="" />
+      <created>1732716198067</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1732716198067</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Add all files">
+      <option name="closed" value="true" />
+      <created>1737124368296</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737124368296</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Исправлено меню &quot;Настройки&quot;&#10;Добавлено динамическое изменение громкости звука в меню &quot;Настройки&quot;">
+      <option name="closed" value="true" />
+      <created>1737128971533</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1737128971533</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Добавлен секундомер уровня">
+      <option name="closed" value="true" />
+      <created>1737756303202</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1737756303202</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Переделал алгоритм запуска окна уровня&#10;Улучшил movement игрока (Игрок останавливается, если были нажаты кнопки противоположных направлений)">
+      <option name="closed" value="true" />
+      <created>1737791714198</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1737791714198</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Добавление экрана победы">
+      <option name="closed" value="true" />
+      <created>1737924357320</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1737924357320</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Добавление экрана проигрыша">
+      <option name="closed" value="true" />
+      <created>1738010815340</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1738010815340</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Добавление врагов&#10;Добавление системы жизней и получения урона">
+      <option name="closed" value="true" />
+      <created>1738268140059</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1738268140059</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Враги, враги и еще раз враги&#10;Добавление спрайта скелета&#10;Добавление ХП бар врагов&#10;Добавление &quot;Арена со скелетами&quot;&#10;Добавление партиклов при ударе">
+      <option name="closed" value="true" />
+      <created>1738699544810</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1738699544810</updated>
+    </task>
+    <task id="LOCAL-00009" summary="requirements.txt">
+      <option name="closed" value="true" />
+      <created>1738776081609</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1738776081609</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов">
+      <option name="closed" value="true" />
+      <created>1739301690176</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1739301690176</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add all files" />
+    <MESSAGE value="Исправлено меню &quot;Настройки&quot;&#10;Добавлено динамическое изменение громкости звука в меню &quot;Настройки&quot;" />
+    <MESSAGE value="Добавлен секундомер уровня" />
+    <MESSAGE value="Переделал алгоритм запуска окна уровня&#10;Улучшил movement игрока (Игрок останавливается, если были нажаты кнопки противоположных направлений)" />
+    <MESSAGE value="Добавление экрана победы" />
+    <MESSAGE value="Добавление экрана проигрыша" />
+    <MESSAGE value="Добавление врагов&#10;Добавление системы жизней и получения урона" />
+    <MESSAGE value="Враги, враги и еще раз враги&#10;Добавление спрайта скелета&#10;Добавление ХП бар врагов&#10;Добавление &quot;Арена со скелетами&quot;&#10;Добавление партиклов при ударе" />
+    <MESSAGE value="requirements.txt" />
+    <MESSAGE value="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов" />
+    <option name="LAST_COMMIT_MESSAGE" value="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов" />
+  </component>
+</project>
