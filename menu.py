@@ -34,6 +34,7 @@ volume_music = None
 
 record = None
 player_stats = None
+print(player_stats)
 
 
 # Меню
