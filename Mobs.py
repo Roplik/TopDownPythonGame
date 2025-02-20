@@ -42,6 +42,40 @@ class Enemy(pygame.sprite.Sprite):
         self.give_exp = exp
         self.distance = distance
 
+        self.death_sound = pygame.mixer.Sound('sound/death_sound.mp3')
+        self.death_sound.set_volume(0.5 * self.player.settings.volume)
+
+    def check_collision_with_enemies(self):
+        # Получаем список всех врагов в группе
+        for enemy in self.player.enemies_group:
+            if enemy != self and self.hitbox.colliderect(enemy.hitbox):  # Проверяем столкновение с другим врагом
+                self.resolve_collision(enemy)
+
+    def resolve_collision(self, other_enemy):
+        # Вычисляем вектор отталкивания
+        dx = self.hitbox.centerx - other_enemy.hitbox.centerx
+        dy = self.hitbox.centery - other_enemy.hitbox.centery
+        distance = math.hypot(dx, dy)
+
+        if distance == 0:
+            return  # Избегаем деления на ноль
+
+        # Нормализуем вектор
+        dx /= distance
+        dy /= distance
+
+        # Отталкиваем врагов друг от друга
+        overlap = (self.hitbox.width + other_enemy.hitbox.width) / 2 - distance
+        if overlap > 0:
+            self.hitbox.x += dx * overlap / 2
+            self.hitbox.y += dy * overlap / 2
+            other_enemy.hitbox.x -= dx * overlap / 2
+            other_enemy.hitbox.y -= dy * overlap / 2
+
+            # Обновляем позицию спрайта
+            self.rect.center = self.hitbox.center
+            other_enemy.rect.center = other_enemy.hitbox.center
+
     def main(self):
         # Проверка расстояния до игрока
         distance_to_player = self.rect.centerx - self.player.rect.centerx, self.rect.centery - self.player.rect.centery
@@ -77,6 +111,9 @@ class Enemy(pygame.sprite.Sprite):
             if self.rect.colliderect(self.player.hitbox):
                 self.player.take_damage(self.damage)  # Уменьшаем здоровье игрока на 10 при столкновении
 
+        # Проверка коллизий с другими врагами
+        self.check_collision_with_enemies()
+
     def take_damage(self, amount):
         self.health -= amount
         if self.health <= 0:
@@ -111,9 +148,11 @@ class Enemy(pygame.sprite.Sprite):
             if particle.lifetime <= 0 or particle.size <= 0:
                 self.hit_particles.remove(particle)  # Удаляем "мёртвые" частицы
 
-    def die(self):
-        self.player.exp += self.give_exp
+    def die(self, give=True):
+        if give:
+            self.player.exp += self.give_exp
         print(self.player.exp)
+        self.death_sound.play()
         self.kill()
 
     def update(self):
@@ -137,7 +176,7 @@ class Skelet(Enemy):
             health=100,  # Здоровье скелета
             damage=50,  # Урон скелета
             speed=4,  # Скорость скелета
-            exp=1000000,  # Сколько опыта дается за склета
+            exp=100,  # Сколько опыта дается за склета
             distance=300
         )
 
@@ -156,9 +195,9 @@ class LostSoul(Enemy):
             image=orig_images,
             health=100,
             damage=50,
-            speed=2,
-            exp=1000000,
-            distance=1000
+            speed=3,
+            exp=200,
+            distance=100000
         )
         self.boss = None
 
@@ -180,7 +219,6 @@ class Boss(Enemy):
         orig_images = frames[9]
         boss_image = pygame.transform.scale(orig_images, (32, 32))
         boss_image = pygame.transform.scale(boss_image, (64, 64))  # Босс больше обычных врагов
-
         # Вызываем конструктор базового класса
         super().__init__(
             pos=pos,
@@ -190,15 +228,15 @@ class Boss(Enemy):
             health=500,  # Больше здоровья
             damage=50,  # Больше урона
             speed=2,  # Меньше скорости (босс медленный, но мощный)
-            exp=10,
-            distance=1000
+            exp=100,
+            distance=10000
         )
 
         # Уникальные атрибуты босса
         self.last_ability_time = 0  # Время последней способности
         self.ability_cooldown = 5000  # Задержка между способностями (в миллисекундах)
         self.minions_count = 0
-        self.max_minions = 6
+        self.max_minions = 2
 
     def update(self):
         super().update()  # Вызываем обновление из базового класса
@@ -229,5 +267,32 @@ class Boss(Enemy):
                 minion.boss = self
 
     def die(self):
+        # Убиваем всех мобов в группе
+        for enemy in self.groups()[0]:  # Предполагаем, что группа врагов — это первая группа
+            if enemy != self:  # Не убиваем самого босса
+                try:
+                    enemy.die(False)  # Вызываем метод die у каждого моба
+                except:
+                    pass
+                # Создаем портал после смерти босса
+        self.player.pos_teleport = self.rect.center
+        self.player.boss_defeating = True
+        # Вызываем метод die из базового класса
         super().die()
-        self.player.win = True
+
+
+class Portal(pygame.sprite.Sprite):
+    def __init__(self, group, player):
+        super().__init__(group)
+        self.player = player
+
+        # Загрузка текстуры портала
+        self.image = pygame.image.load("image/portal.png").convert_alpha()  # Укажите путь к изображению
+        self.image = pygame.transform.scale(self.image, (50, 50))  # Масштабируем под нужный размер
+
+        # Прямоугольник для позиционирования
+        self.rect = self.image.get_rect()
+
+    def teleport(self):
+        if self.rect.colliderect(self.player.hitbox):
+            self.player.win = True
