@@ -3,6 +3,7 @@ import math
 from pygame.math import Vector2
 from sys import exit
 import random
+from Mobs import Portal
 
 
 def draw_text(surface, text, pos, font_size=24, color=(255, 255, 255)):
@@ -12,18 +13,19 @@ def draw_text(surface, text, pos, font_size=24, color=(255, 255, 255)):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacles_sprites, enemy_sprites, projectile):
+    def __init__(self, pos, groups, obstacles_sprites, enemy_sprites, projectile, settings, stats=None):
         super().__init__(groups)
+        print(stats)
         self.image = pygame.image.load("Char_Sprites/char_idle_up_anim.gif").convert_alpha()
         self.image = pygame.transform.scale(self.image, (32, 32))
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, -26)
 
         self.direction = pygame.math.Vector2(0, 0)
-        self.speed = 5
-        self.walk_speed = 5
-        self.run_speed = 8
-        self.damage = 50
+        self.speed = stats.get("speed", 5) if stats else 5
+        self.walk_speed = stats.get("walk_speed", 5) if stats else 5
+        self.run_speed = stats.get("run_speed", 5) if stats else 5
+        self.damage = stats.get("damage", 25) if stats else 25
 
         self.sprite_width = 32  # ширина одного спрайта
         self.sprite_height = 32  # высота одного спрайта
@@ -32,10 +34,11 @@ class Player(pygame.sprite.Sprite):
         self.visible_sprite = groups
 
         self.screen = pygame.display.get_surface()
+        self.settings = settings
 
         # Инициализация жизней и здоровья
-        self.max_health = 100
-        self.current_health = self.max_health
+        self.max_health = stats.get("max_health", 100) if stats else 100
+        self.current_health = stats.get("current_health", self.max_health) if stats else self.max_health
         self.die = False
         self.win = False
 
@@ -48,17 +51,21 @@ class Player(pygame.sprite.Sprite):
         self.fireballs = projectile
 
         # Таймер для атаки
-        self.attack_cooldown = 1000  # Интервал между атаками (в миллисекундах)
+        self.attack_cooldown = stats.get("attack_speed",
+                                         1000) if stats else 1000  # Интервал между атаками (в миллисекундах)
         self.last_attack_time = 0  # Время последней атаки
         self.attack_radius = 100
 
         # Система стрельбы
-        self.fireball_cooldown = 1000  # Задержка между выстрелами (в миллисекундах)
+        self.fireball_cooldown = stats.get("fireball_cooldown",
+                                           1000) if stats else 1000  # Задержка между выстрелами (в миллисекундах)
         self.last_fireball_time = 0  # Время последнего выстрела
 
-        self.exp = 0
-        self.level = 1
-        self.exp_to_next_level = 100
+        self.exp = stats.get("exp", 0) if stats else 0
+        self.level = stats.get("lvl", 1) if stats else 1
+        self.exp_to_next_level = stats.get("exp_to_next_level", 100) if stats else 100
+
+        self.stop_spawn = False
 
         # region load_sprite
         # Загружаем и масштабируем спрайты
@@ -107,6 +114,9 @@ class Player(pygame.sprite.Sprite):
             'left': [self.get_sprite(self.left_idle, i) for i in range(6)],
             'right': [self.get_sprite(self.right_idle, i) for i in range(6)]
         }
+
+        self.boss_defeating = False
+        self.pos_teleport = None
 
         # Список всех возможных улучшений
 
@@ -343,13 +353,28 @@ class Player(pygame.sprite.Sprite):
             self.attack()  # Вызываем метод атаки
             self.last_attack_time = current_time  # Обновляем время последней атаки
 
+    def get_stats(self):
+        """Возвращает текущие характеристики игрока."""
+        return {
+            "max_health": self.max_health,
+            "current_health": self.current_health,
+            "damage": self.damage,
+            "speed": self.speed,
+            "walk_speed": self.walk_speed,
+            "run_speed": self.run_speed,
+            "attack_speed": self.attack_cooldown,
+            "fireball_cooldown": self.fireball_cooldown,
+            "exp": self.exp,
+            "lvl": self.level,
+            "exp_to_next_level": self.exp_to_next_level
+        }
+
     def attack(self):
         nearest_enemy = self.find_nearest_enemy()
         if nearest_enemy:
             distance = math.hypot(self.rect.centerx - nearest_enemy.rect.centerx,
                                   self.rect.centery - nearest_enemy.rect.centery)
-            if distance <= self.attack_radius:
-                # Наносим урон ближайшему врагу
+            if distance <= self.attack_radius and not isinstance(nearest_enemy, Portal):
                 nearest_enemy.take_damage(self.damage)  # Пример нанесения урона
 
     def shoot_fireball(self):
@@ -402,7 +427,8 @@ class Fireball(pygame.sprite.Sprite):
         self.rect.y += self.direction.y * self.speed
         # Проверяем столкновения с врагами
         for enemy in pygame.sprite.spritecollide(self, self.enemy_group, False):
-            enemy.take_damage(self.damage)  # Наносим урон врагу
+            if not isinstance(enemy, Portal):
+                enemy.take_damage(self.damage)  # Наносим урон врагу
             self.kill()  # Удаляем фаерболл
         if pygame.sprite.spritecollide(self, self.object_group, False):
             self.kill()  # Удаляем фаерболл

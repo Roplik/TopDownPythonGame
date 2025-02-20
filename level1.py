@@ -19,28 +19,46 @@ class Level:
         self.projecti_sprites = pygame.sprite.Group()
         self.spritesheet_mobs = pygame.image.load("sprites/Dungeon_Character_2.png").convert_alpha()
         self.create_split_spritesheet()
-        self.create_map()
-        self.music_path = 'music/Yoann Laulan - 1-Dead Cells.mp3'
         self.setting = settings.Settings()
         self.setting.load_settings()
-        self.timer = Timer(pygame.time.get_ticks())
+
+        self.music_path = 'music/Yoann Laulan - 1-Dead Cells.mp3'
+        self.win_sound = pygame.mixer.Sound('sound/win_sound.mp3')
+        self.win_sound.set_volume(self.setting.volume * 0.5)
+
         self.complete_level = False
         self.player_die = False
         self.start_boss = False
+        self.stop_spawn = False
+        self.portal = None
+        self.create_map()
+        self.timer = Timer(pygame.time.get_ticks())
 
     def create_split_spritesheet(self):
         split_spritesheet(self.spritesheet_mobs, rows=2, cols=7, width=16, height=16)
 
     def check_change_scene(self):
+
+        if self.player.boss_defeating:
+            # Создаем портал после смерти босса
+            self.portal = Portal(self.visible_sprites, self.player)
+            self.portal.rect.center = self.player.pos_teleport
+
         if self.timer.second >= 2:
+            pygame.mixer.music.stop()
             if not self.start_boss:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load("music/Berserk OST - Ghosts.mp3")
-                pygame.mixer.music.set_volume(self.setting.volume)
-                pygame.mixer.music.play(-1)
-                self.boss = Boss((650, 300), [self.visible_sprites, self.enemy_array], self.player)
+                self.player.stop_spawn = True
+                for i in self.enemy_array:
+                    i.die(False)
                 self.start_boss = True
-        elif self.player.win:
+                self.portal = Portal(self.visible_sprites, self.player)
+                self.portal.rect.center = (642, 319)
+                self.win_sound.play()
+
+        if self.portal is not None:
+            self.portal.teleport()
+
+        if self.player.win:
             pygame.mixer.music.stop()
             self.complete_level = True
         elif self.player.die:
@@ -65,12 +83,13 @@ class Level:
 
         # Создаем игрока после загрузки карты
         self.player = Player((650, 1000), [self.visible_sprites], self.obstacles_sprites, self.enemy_array,
-                             self.projecti_sprites)
+                             self.projecti_sprites, self.setting)
 
     def run(self):
         self.display_surface.fill((0, 0, 0))  # Очистка экрана
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
+
         # Отрисовка границ коллайдера игрока
         # self.player.draw_collider(self.display_surface)
         debug(self.player.direction)
@@ -115,17 +134,19 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.spawn_mobs(player)
 
     def spawn_mobs(self, player):
-        current_time = pygame.time.get_ticks()
-        enemy_group = player.enemies_group
-        if current_time - self.last_spawn_time > self.mob_spawn_cooldown and len(player.enemies_group) < self.max_mobs:
-            # Генерация случайной позиции для моба
-            spawn_x = random.randint(34, 1210)
-            spawn_y = random.randint(86, 550)
-            spawn_pos = (spawn_x, spawn_y)
+        if not player.stop_spawn:
+            current_time = pygame.time.get_ticks()
+            enemy_group = player.enemies_group
+            if current_time - self.last_spawn_time > self.mob_spawn_cooldown and len(
+                    player.enemies_group) < self.max_mobs:
+                # Генерация случайной позиции для моба
+                spawn_x = random.randint(34, 1210)
+                spawn_y = random.randint(86, 550)
+                spawn_pos = (spawn_x, spawn_y)
 
-            # Проверка, чтобы моб не появлялся слишком близко к игроку
-            if math.hypot(spawn_x - player.rect.centerx, spawn_y - player.rect.centery) > 200:
-                new_mob = Skelet(spawn_pos, self, player)  # Создаём нового моба
-                enemy_group.add(new_mob)
-                player.enemies_group.add(new_mob)
-                self.last_spawn_time = current_time  # Обновляем время последнего появления
+                # Проверка, чтобы моб не появлялся слишком близко к игроку
+                if math.hypot(spawn_x - player.rect.centerx, spawn_y - player.rect.centery) > 200:
+                    new_mob = Skelet(spawn_pos, self, player)  # Создаём нового моба
+                    enemy_group.add(new_mob)
+                    player.enemies_group.add(new_mob)
+                    self.last_spawn_time = current_time  # Обновляем время последнего появления

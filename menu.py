@@ -6,6 +6,7 @@ from gamescript import *
 import settings
 from MenuSetting import *
 from you_are_dead import *
+from level2 import Level2
 
 # Инициализация Pygame
 pygame.init()
@@ -28,18 +29,24 @@ font = pygame.font.Font(None, 50)
 
 # Сцена
 current_index_scene = 0
+cur_level = 1
+volume_music = None
+
+record = None
+player_stats = None
 
 
 # Меню
 class Menu:
     def __init__(self):
-
+        global volume_music
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
         self.options = ["Играть", "Настройки", "Выйти"]
         self.current_option_index = 0
         self.setting = settings.Settings()
         self.setting.load_settings()
+        volume_music = self.setting.volume
         pygame.mixer.music.set_volume(self.setting.volume)
 
     def reload_settings(self):
@@ -169,7 +176,7 @@ def setting_window():
 
 
 def run_game(zxc):
-    global current_index_scene
+    global current_index_scene, cur_level, record, player_stats
     game_run = True
     complete_game = False
     # Основной цикл игры
@@ -183,19 +190,30 @@ def run_game(zxc):
                 if event.key == pygame.K_ESCAPE:
                     game_run = False
                     current_index_scene = 0
+
         if zxc.level.complete_level:
             game_run = False
-            current_index_scene = 3
+            if cur_level == 1:
+                player_stats = zxc.level.player.get_stats()
+                cur_level = 2
+            else:
+                current_index_scene = 3
+                record = zxc.level.timer.second
+                player_stats = None
+
         elif zxc.level.player_die:
             game_run = False
             current_index_scene = 4
+            player_stats = None
         if game_run:
             game.level.run()
             pygame.display.flip()  # Обновление экрана
-            # self.draw_colliders()
 
 
-# ====================================СЦЕНА_ПОБЕДЫ=====================================================================#
+
+
+
+# ====================================СЦЕНА_ПОБЕДЫ==================================================================== #
 # ВРЕМЯ ЧАС НОЧИ, МНЕ ЛЕНЬ ПИСАТЬ ОТДЕЛЬНЫЙ КЛАСС, ПОТОМ КАК НИТЬ С ЭТИМ РАЗБЕРУСЬ
 def back_to_menu():
     global current_index_scene
@@ -210,10 +228,23 @@ def draw_text(text, font, surface, x, y, color):
     surface.blit(textobj, textrect)
 
 
+def load_record():
+    try:
+        with open("record.txt", "r") as file:
+            return float(file.read())  # Загружаем лучшее время из файла
+    except FileNotFoundError:
+        return float('inf')  # Если файла нет, возвращаем "бесконечность"а
+
+
+def save_record(new_record):
+    with open("record.txt", "w") as file:
+        file.write(str(new_record))  # Сохраняем новое лучшее время
+
+
 def win_screen():
     # Константы
     running = True
-    WIDTH, HEIGHT = 800, 600
+    WIDTH, HEIGHT = 1200, 675
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     FONT_SIZE = 48
@@ -221,14 +252,31 @@ def win_screen():
     # Создание окна
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Победа!")
+    pygame.mixer.music.load("music/Dark Souls - Lord Gvin.mp3")
+    pygame.mixer.music.set_volume(volume_music)
+    pygame.mixer.music.play()
 
     # Шрифт
     font = pygame.font.Font(None, FONT_SIZE)
 
-    # Функция для отрисовки текста
+    # Загрузка фонового изображения
+    background_image = pygame.image.load("image/win.jpg")  # Укажите путь к изображению
+    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))  # Масштабируем под размер экрана
 
     # Кнопка
-    button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
+    button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 125, 200, 50)
+
+    # Загрузка лучшего результата
+    best_record = load_record()
+
+    # Проверка, побит ли рекорд
+    if record < best_record:
+        save_record(record)  # Сохраняем новый рекорд
+        best_record = record
+        record_message = "Новый рекорд!"
+    else:
+        record_message = "Рекорд не побит."
+
     # Основной цикл
     while running:
         for event in pygame.event.get():
@@ -239,18 +287,25 @@ def win_screen():
                 if button_rect.collidepoint(event.pos):
                     running = False
                     back_to_menu()
-        # Заполнение фона
-        screen.fill(WHITE)
+
+        # Отрисовка фонового изображения
+        screen.blit(background_image, (0, 0))
+
         # Отрисовка текста
-        draw_text("Поздравляю, вы победили!", font, screen, WIDTH // 2, HEIGHT // 2, BLACK)
+        draw_text("Поздравляю, вы победили!", font, screen, WIDTH // 2, HEIGHT // 2 - 50, WHITE)
+        draw_text(f"Ваше время: {record:.2f} сек.", font, screen, WIDTH // 2, HEIGHT // 2, WHITE)
+        draw_text(f"Лучшее время: {best_record:.2f} сек.", font, screen, WIDTH // 2, HEIGHT // 2 + 50, WHITE)
+        draw_text(record_message, font, screen, WIDTH // 2, HEIGHT // 2 + 100, WHITE)
+
         # Отрисовка кнопки
         pygame.draw.rect(screen, BLACK, button_rect)
-        draw_text("В меню", font, screen, WIDTH // 2, HEIGHT // 2 + 75, WHITE)  # Текст кнопки белый
+        draw_text("В меню", font, screen, WIDTH // 2, HEIGHT // 2 + 150, WHITE)  # Текст кнопки белый
+
         # Обновление экрана
         pygame.display.flip()
 
 
-# =====================================================================================================================#
+# ==================================================================================================================== #
 
 def dead_screen():
     global current_index_scene
@@ -274,8 +329,9 @@ def dead_screen():
 while current_index_scene is not None:
     if current_index_scene == 0:
         scene_menu()
+        print(volume_music)
     elif current_index_scene == 1:
-        game = Game()
+        game = Game(number=cur_level, stats=player_stats)
         run_game(game)
     elif current_index_scene == 2:
         setting_window()

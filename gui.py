@@ -26,7 +26,7 @@ class Timer:
         if running:
             seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000  # Переводим в секунды
         else:
-            seconds = 0  # Если таймер не запущен, показываем 0 секунд
+            seconds = self.second
         self.second = seconds
         timer_text = font.render(f"Время: {seconds:.2f} секунд", True, (255, 255, 255))
 
@@ -60,4 +60,4 @@ def player_stats(screen, player):
     draw_text(screen, f"Level: {player.level}", (pos_x, pos_y + 30))
     draw_text(screen, f"Exp: {player.exp}/{player.exp_to_next_level}", (pos_x, pos_y + 60))
     draw_text(screen, f"Damage: {player.damage}", (pos_x, pos_y + 90))
-    draw_text(screen, f"Speed: {round(player.speed,3)}", (pos_x, pos_y + 120))
+    draw_text(screen, f"Speed: {round(player.speed, 3)}", (pos_x, pos_y + 120))

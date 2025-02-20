@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="520801b0-4a36-4d8f-bf73-51608cc244e3" name="Changes" comment="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов">
+    <list default="true" id="520801b0-4a36-4d8f-bf73-51608cc244e3" name="Changes" comment="+ реиграбельность&#10;добавление системы выпадений случайных улучшений&#10;босс появляется после некоторого кол-ва времени&#10;игрок может стрелять огненными шарами">
+      <change afterPath="$PROJECT_DIR$/level2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Mobs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Mobs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cfg.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cfg.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamescript.py" beforeDir="false" afterPath="$PROJECT_DIR$/gamescript.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/level1.py" beforeDir="false" afterPath="$PROJECT_DIR$/level1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/particl.py" beforeDir="false" afterPath="$PROJECT_DIR$/particl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maps/main.tmx" beforeDir="false" afterPath="$PROJECT_DIR$/maps/main.tmx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/tile.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,7 +226,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739301690176</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="+ реиграбельность&#10;добавление системы выпадений случайных улучшений&#10;босс появляется после некоторого кол-ва времени&#10;игрок может стрелять огненными шарами">
+      <option name="closed" value="true" />
+      <created>1739825128601</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1739825128601</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -246,6 +259,7 @@
     <MESSAGE value="Враги, враги и еще раз враги&#10;Добавление спрайта скелета&#10;Добавление ХП бар врагов&#10;Добавление &quot;Арена со скелетами&quot;&#10;Добавление партиклов при ударе" />
     <MESSAGE value="requirements.txt" />
     <MESSAGE value="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов" />
-    <option name="LAST_COMMIT_MESSAGE" value="Опыт бесценен&#10;Добавление опыта&#10;Добавление прокаки&#10;Оптимизация мобов" />
+    <MESSAGE value="+ реиграбельность&#10;добавление системы выпадений случайных улучшений&#10;босс появляется после некоторого кол-ва времени&#10;игрок может стрелять огненными шарами" />
+    <option name="LAST_COMMIT_MESSAGE" value="+ реиграбельность&#10;добавление системы выпадений случайных улучшений&#10;босс появляется после некоторого кол-ва времени&#10;игрок может стрелять огненными шарами" />
   </component>
 </project>
