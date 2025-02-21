@@ -46,9 +46,11 @@ class Enemy(pygame.sprite.Sprite):
         self.death_sound.set_volume(0.5 * self.player.settings.volume)
 
     def check_collision_with_enemies(self):
+
         # Получаем список всех врагов в группе
         for enemy in self.player.enemies_group:
-            if enemy != self and self.hitbox.colliderect(enemy.hitbox):  # Проверяем столкновение с другим врагом
+            if enemy != self and not isinstance(enemy, Boss) and not isinstance(self, Boss) and self.hitbox.colliderect(
+                    enemy.hitbox):  # Проверяем столкновение с другим врагом
                 self.resolve_collision(enemy)
 
     def resolve_collision(self, other_enemy):

@@ -44,7 +44,7 @@ class Level:
             self.portal = Portal(self.visible_sprites, self.player)
             self.portal.rect.center = self.player.pos_teleport
 
-        if self.timer.second >= 2:
+        if self.timer.second >= 120:
             pygame.mixer.music.stop()
             if not self.start_boss:
                 self.player.stop_spawn = True
