@@ -362,3 +362,4 @@ while current_index_scene is not None:
         dead_screen()
 
 sys.exit()
+
