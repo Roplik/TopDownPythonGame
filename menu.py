@@ -10,15 +10,17 @@ from level2 import Level2
 
 # Инициализация Pygame
 pygame.init()
-
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 # Настройки экрана
-WIDTH, HEIGHT = 735, 413
+WIDTH, HEIGHT = 1920, 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
 # Загрузка изображения фона
-background_image = pygame.image.load("image/background_yarnam.jpg")
-background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+background_image = pygame.image.load("image/yarnam_menu.png")
+
+background_image_high_res = pygame.transform.scale(background_image, (1920, 1080))
+background_image_low_res = pygame.transform.scale(background_image, (1200, 800))
 
 # Цвета
 WHITE = (255, 255, 255)
@@ -34,25 +36,35 @@ volume_music = None
 
 record = None
 player_stats = None
-print(player_stats)
 
 
 # Меню
 class Menu:
     def __init__(self):
-        global volume_music
+        global volume_music, screen, WIDTH, HEIGHT, background_image
+        # Создание окна
         os.environ['SDL_VIDEO_CENTERED'] = '1'
-
         self.options = ["Играть", "Настройки", "Выйти"]
         self.current_option_index = 0
         self.setting = settings.Settings()
         self.setting.load_settings()
+        WIDTH = self.setting.screen_width
+        HEIGHT = self.setting.screen_height
+        background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+        if self.setting.screen_width == 1920 and self.setting.screen_height == 1080:
+            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+            background_image = background_image_high_res
+        else:
+            screen = pygame.display.set_mode((WIDTH, HEIGHT))
+            background_image = background_image_low_res
         volume_music = self.setting.volume
         pygame.mixer.music.set_volume(self.setting.volume)
 
     def reload_settings(self):
+        global volume_music
         self.setting.load_settings()
         pygame.mixer.music.set_volume(self.setting.volume)
+        volume_music = self.setting.volume
 
     def draw(self):
         # Отрисовка кнопок меню
@@ -101,9 +113,6 @@ class Menu:
             menu.select()
             if last_index != current_index_scene:
                 return True
-
-
-menu = Menu()
 
 
 def scene_menu():
@@ -200,6 +209,7 @@ def run_game(zxc):
             else:
                 current_index_scene = 3
                 record = zxc.level.timer.second
+                cur_level = 1
                 player_stats = None
 
         elif zxc.level.player_die:
@@ -211,9 +221,7 @@ def run_game(zxc):
             pygame.display.flip()  # Обновление экрана
 
 
-
-
-
+# region Сцена победы
 # ====================================СЦЕНА_ПОБЕДЫ==================================================================== #
 # ВРЕМЯ ЧАС НОЧИ, МНЕ ЛЕНЬ ПИСАТЬ ОТДЕЛЬНЫЙ КЛАСС, ПОТОМ КАК НИТЬ С ЭТИМ РАЗБЕРУСЬ
 def back_to_menu():
@@ -245,13 +253,27 @@ def save_record(new_record):
 def win_screen():
     # Константы
     running = True
-    WIDTH, HEIGHT = 1200, 675
+
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     FONT_SIZE = 48
 
+    # Загрузка фонового изображения
+    background_image = pygame.image.load("image/win.jpg")  # Укажите путь к изображению
+    background_image_low_res = pygame.transform.scale(background_image,
+                                                      (1200, 800))  # Масштабируем под размер экран
+    background_image_high_res = pygame.transform.scale(background_image,
+                                                       (1920, 1080))  # Масштабируем под размер экран
+
+    if WIDTH == 1920 and HEIGHT == 1080:
+        screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+        background_image = background_image_high_res
+    else:
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        background_image = background_image_low_res
+
     # Создание окна
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
     pygame.display.set_caption("Победа!")
     pygame.mixer.music.load("music/Dark Souls - Lord Gvin.mp3")
     pygame.mixer.music.set_volume(volume_music)
@@ -259,10 +281,6 @@ def win_screen():
 
     # Шрифт
     font = pygame.font.Font(None, FONT_SIZE)
-
-    # Загрузка фонового изображения
-    background_image = pygame.image.load("image/win.jpg")  # Укажите путь к изображению
-    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))  # Масштабируем под размер экрана
 
     # Кнопка
     button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 125, 200, 50)
@@ -307,7 +325,7 @@ def win_screen():
 
 
 # ==================================================================================================================== #
-
+# endregion
 def dead_screen():
     global current_index_scene
     running = True
@@ -329,6 +347,7 @@ def dead_screen():
 # Смена сцен
 while current_index_scene is not None:
     if current_index_scene == 0:
+        menu = Menu()
         scene_menu()
         print(volume_music)
     elif current_index_scene == 1:
